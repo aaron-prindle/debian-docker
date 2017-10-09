@@ -54,6 +54,14 @@ debootstrap_image(
     overlay_tar = ":overlay.tar",
 )
 
+load("//reproducible:debootstrap.bzl", "ubuntu_image")
+
+ubuntu_image(
+    name = "ubuntu",
+    release = "16.04",
+    env = {"PORT": "8080"},
+)
+
 structure_test(
     name = "debian8_test",
     config = "//tests:debian_test.yaml",
