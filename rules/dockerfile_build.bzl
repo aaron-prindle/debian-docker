@@ -30,13 +30,14 @@ set -ex
 
 # Load the base image
 docker load -i {base_tar}
-
+echo $(ls -l)
+echo $(pwd)
 # Template out the FROM line.
-sed -i "" "s|FROM.*|FROM {base_name}|g" {dockerfile}
+sed -i "s|FROM.*|FROM {base_name}|g" {dockerfile}
 
 # Setup a tmpdir context
 tmpdir=$(mktemp -d)
-tar -xzf {context} -C "$tmpdir"
+tar -xvf {context} -C "$tmpdir"
 cp {dockerfile} "$tmpdir"
 
 # Perform the build in the context
