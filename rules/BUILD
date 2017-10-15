@@ -9,8 +9,8 @@ pkg_tar(
 )
 
 dockerfile_build(
-    name = "foo",
-    base = "//reproducible:debian8.tar",
+    name = "ubuntu_build",
+    base = "//reproducible:ubuntu.tar",
     context = ":context.tar",
     dockerfile = ":Dockerfile",
 )
