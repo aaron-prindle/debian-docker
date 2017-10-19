@@ -56,7 +56,7 @@ docker rm $cid
 nodebootstrap = rule(
     attrs = {
         "_builder_image": attr.label(
-            default = Label("//reproducible/ubuntu:nodejs_builder.tar"),
+            default = Label("//reproducible/ubuntu:node_8_5_0_builder.tar"),
             allow_files = True,
             single_file = True,
         ),

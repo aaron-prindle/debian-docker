@@ -55,16 +55,22 @@ docker_build(
     ]
 )
 
-# nodejs_builder is a docker image that is capable of building nodejs running
+# node_%s_builder is a docker image that is capable of building nodejs running
 # the mknodeimage.sh script on top of ubuntu + build_essential/python2.7
-docker_build(
-    name = "nodejs_builder",
+NODE_MAP = {
+    "8_5_0": "dd5ac97074882ba62892bdb91ec5e624c338d772a6218da08c182231031a4446",
+    "8_6_0": "80551d47440c602c5825a3f6611e13cb0c57d277234dbff693af433a88351a08",
+}
+
+
+[docker_build(
+    name = "node_%s_builder" % version,
     base = ":ubuntu_build",
     entrypoint = [
         "/mknodeimage.sh",
     ],
     files = [
         ":mknodeimage.sh",
-        "@nodejs_tar_download//file"
+        "@node_%s//file" % version,
         ],
-)
+) for version, sha in NODE_MAP.items()]
