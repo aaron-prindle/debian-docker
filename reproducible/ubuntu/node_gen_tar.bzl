@@ -53,10 +53,10 @@ docker rm $cid
 
     return struct()
 
-nodebootstrap = rule(
+node_gen_tar = rule(
     attrs = {
         "_builder_image": attr.label(
-            default = Label("//reproducible/ubuntu:nodejs_builder.tar"),
+            default = Label("//reproducible/ubuntu:node_builder.tar"),
             allow_files = True,
             single_file = True,
         ),
@@ -73,17 +73,22 @@ load(
     "docker_build",
 )
 
-def nodebootstrap_image(name, env=None):
+def node_gen_tar_image(name, env=None):
+    docker_build(
+        name = "_builder" % name,
+        base = ":ubuntu_build",
+        entrypoint = [
+            "/mknodeimage.sh",
+        ],
+        files = [
+            ":mknodeimage.sh",
+            "@%s_src//file" % name,
+            ],
+    )
     if not env:
         env = {}
-    nodejs = "%s.nodejs" % name
-    nodebootstrap(
+    nodejs = "%s" % name
+    node_gen_tar(
         name=nodejs,
-    )
-    tars = [nodejs]
-    docker_build(
-        name=name,
-        tars=tars,
-        env=env,
-        cmd="/bin/bash",
+        _builder_image=Label("//reproducible/ubuntu:%s_builder.tar" % name)
     )

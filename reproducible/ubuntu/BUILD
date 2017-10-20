@@ -24,25 +24,30 @@ docker_build(
     cmd = "/bin/bash",
 )
 
-load("//reproducible/ubuntu:nodebootstrap.bzl", "nodebootstrap_image")
+load("//reproducible/ubuntu:node_gen_tar.bzl", "node_gen_tar")
+
+NODE_MAP = {
+    "8_5_0": "dd5ac97074882ba62892bdb91ec5e624c338d772a6218da08c182231031a4446",
+    "8_6_0": "80551d47440c602c5825a3f6611e13cb0c57d277234dbff693af433a88351a08",
+}
 
 # nodebootstrap_image generates a .tar.gz rootfs that has has a nodejs
 # install compiled from source
-nodebootstrap_image(
-    name = "nodejs",
-)
+[ node_gen_tar(
+    name = "node_%s" % version,
+) for version, sha in NODE_MAP.items()]
 
 # nodejs_ubuntu is a docker image that is a nodejs install compiled from source
 # on top of a vanilla ubuntu release
-docker_build(
+[ docker_build(
     name = "nodejs_ubuntu",
     base = "//reproducible/ubuntu:ubuntu",
     env = NODEJS_ENV,
     ports = ["8080"],
     tars =[
-        "//reproducible/ubuntu:nodejs"
+        "//reproducible/ubuntu:node_%s" % version,
     ]
-)
+) for version, sha in NODE_MAP.items()]
 
 # nodejs_ubuntu_build is a docker image that is a nodejs install compiled from
 # source on top of a vanilla ubuntu release + build_essential/python2.7
@@ -51,20 +56,6 @@ docker_build(
     base = ":ubuntu_build",
     env = NODEJS_ENV,
     tars =[
-        "//reproducible/ubuntu:nodejs"
+        "//reproducible/ubuntu:node_%s" % version,
     ]
-)
-
-# nodejs_builder is a docker image that is capable of building nodejs running
-# the mknodeimage.sh script on top of ubuntu + build_essential/python2.7
-docker_build(
-    name = "nodejs_builder",
-    base = ":ubuntu_build",
-    entrypoint = [
-        "/mknodeimage.sh",
-    ],
-    files = [
-        ":mknodeimage.sh",
-        "@nodejs_tar_download//file"
-        ],
-)
+) for version, sha in NODE_MAP.items()]
