@@ -100,6 +100,6 @@ http_file(
 
 http_file(
     name = "nodejs_tar_download",
-    sha256 = "94557aa1b9adaa71a424eb7efe8877d7e65bda6e496350c4bac5f64ec715bb1c",
-    url = "https://nodejs.org/dist/v6.11.4/node-v6.11.4.tar.gz",
+    sha256 = "dd5ac97074882ba62892bdb91ec5e624c338d772a6218da08c182231031a4446",
+    url = "https://nodejs.org/dist/v8.5.0/node-v8.5.0.tar.gz",
 )
