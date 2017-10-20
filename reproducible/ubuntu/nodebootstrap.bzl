@@ -56,7 +56,7 @@ docker rm $cid
 nodebootstrap = rule(
     attrs = {
         "_builder_image": attr.label(
-            default = Label("//reproducible/ubuntu:node_8_5_0_builder.tar"),
+            default = Label("//reproducible/ubuntu:node_%_builder.tar" % name),
             allow_files = True,
             single_file = True,
         ),
@@ -74,16 +74,23 @@ load(
 )
 
 def nodebootstrap_image(name, env=None):
+    docker_build(
+        name = "node_%s_builder" % version,
+        base = ":ubuntu_build",
+        entrypoint = [
+            "/mknodeimage.sh",
+            version.replace("_","."),
+        ],
+        files = [
+            ":mknodeimage.sh",
+            "@node_%s//file" % version,
+            ],
+    )
     if not env:
         env = {}
     nodejs = "%s.nodejs" % name
+    # name is wrong here
     nodebootstrap(
         name=nodejs,
     )
     tars = [nodejs]
-    docker_build(
-        name=name,
-        tars=tars,
-        env=env,
-        cmd="/bin/bash",
-    )

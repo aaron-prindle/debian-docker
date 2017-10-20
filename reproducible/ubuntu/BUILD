@@ -24,13 +24,14 @@ docker_build(
     cmd = "/bin/bash",
 )
 
-load("//reproducible/ubuntu:nodebootstrap.bzl", "nodebootstrap_image")
+load("//reproducible/ubuntu:nodebootstrap.bzl", "node_gen_tar")
 
 # nodebootstrap_image generates a .tar.gz rootfs that has has a nodejs
 # install compiled from source
-nodebootstrap_image(
-    name = "nodejs",
-)
+
+[node_gen_tar(
+    name = "node_%s" % version,
+) for version, sha in NODE_MAP.items()]
 
 # nodejs_ubuntu is a docker image that is a nodejs install compiled from source
 # on top of a vanilla ubuntu release
@@ -63,14 +64,4 @@ NODE_MAP = {
 }
 
 
-[docker_build(
-    name = "node_%s_builder" % version,
-    base = ":ubuntu_build",
-    entrypoint = [
-        "/mknodeimage.sh",
-    ],
-    files = [
-        ":mknodeimage.sh",
-        "@node_%s//file" % version,
-        ],
-) for version, sha in NODE_MAP.items()]
+# this is redundant?
