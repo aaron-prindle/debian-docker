@@ -11,7 +11,7 @@ structure_test(
 structure_test(
     name = "ubuntu_build_test",
     config = "//tests:ubuntu_build_test.yaml",
-    image = "//reproducible/ubuntu:ubuntu_build",
+    image = "//reproducible/ubuntu:ubuntu_16_0_4_build",
 )
 
 structure_test(
